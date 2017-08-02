@@ -8,6 +8,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import test.cache.StockMemoryCache;
+import test.cache.ThreadSafeCacheSingleton;
 import test.dto.Price;
 import test.dto.Response;
  
@@ -32,6 +34,11 @@ public class StockPriceAPI {
     	Price price = new Price();
     	price.setTicker("GE");
     	resp.setData(price);
+    	
+    	StockMemoryCache<String, StockMemoryCache<String,String>> cache = ThreadSafeCacheSingleton.getInstance();
+        cache.put("Danh", null);
+        System.out.println("6 Cache Object Added.. cache.size(): " + cache.size());
+        
         return resp;
     }
     
