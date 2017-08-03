@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,6 +19,7 @@ import test.dto.DatePrice;
 import test.dto.Price;
 import test.dto.PriceAverage;
 import test.dto.Response;
+import test.dto.TickerDate;
 import test.util.DateUtil;
  
 @Path("api/v2")
@@ -62,25 +64,7 @@ public class StockPriceAPI {
     		resp.setErrorCode("stock.symbol.notfound");
     		resp.setMessage("Symbol is not found");
     	}
-    	/*
-    	 *   "Prices": [
-	      {"Ticker": "GE",
-	      "DateClose": { ["1999-03-30", "28.32"], ["1999-03-31", "27.94"]},...
-	    ]
-	     "data": [
-        {
-            "dateCloses": [
-                {
-                    "dateClose": "2016-06-12",
-                    "price": null
-                },
-                {
-                    "dateClose": "2016-06-13",
-                    "price": 29.83
-                },
-    	 */
-        
-        return resp;
+         return resp;
     }
     
     @GET
@@ -92,22 +76,8 @@ public class StockPriceAPI {
     	if (datePriceMap != null) {
     		String endDate = DateUtil.getEndDateOfDuration(startDate,DATE_MOVE_200);
     		if (endDate != null) {
-    			List<String> dates = DateUtil.getDaysBetweenDates(startDate,endDate);
-    			Double total200ClosePrices = 0D;
-    			int totalDate = 0;
-    			for (String date : dates) {
-    				Double closePrice = datePriceMap.get(date);
-    				if (closePrice != null) {
-    					total200ClosePrices = total200ClosePrices + closePrice;
-    					totalDate = totalDate + 1;
-    				}
-    			}
-    			Double avg200Price = total200ClosePrices/totalDate;
-    			
-    			PriceAverage avgPrice = new PriceAverage();
-    			avgPrice.setTicker(symbol);
-    			avgPrice.setAvg(avg200Price);
-    			
+    			Double avg200Price = getAvgPrice(datePriceMap,startDate,endDate);
+    			PriceAverage avgPrice = new PriceAverage(symbol,avg200Price);
     			resp.setSuccess(true);
         		resp.setData(avgPrice);
         	} else {
@@ -121,6 +91,53 @@ public class StockPriceAPI {
     		resp.setMessage("Symbol is not found");
     	}    	
         return resp;
+    }
+    
+    @POST
+    @Path("/200dmas")
+    public Response symbolPrices(TickerDate tickerDate) {
+    	Response resp = new Response();
+    	StockMemoryCache<String, Map<String,Double>> cache = ThreadSafeCacheSingleton.getInstance();
+    	List<PriceAverage> priceAverages = new ArrayList<PriceAverage>();
+    	List<String> tickers = tickerDate.getTickers();
+    	String endDate = DateUtil.getEndDateOfDuration(tickerDate.getStartDate(),DATE_MOVE_200);
+    	
+    	if (tickers != null && tickers.size() > 0 && endDate != null) {
+    		for (String symbol : tickers) {
+    			Map<String,Double> datePriceMap = cache.get(symbol);
+            	if (datePriceMap != null) {
+            		Double avg200Price = getAvgPrice(datePriceMap,tickerDate.getStartDate(),endDate);
+            		PriceAverage avgPrice = new PriceAverage(symbol,avg200Price);
+            		priceAverages.add(avgPrice);
+            	} else {
+            		PriceAverage avgPrice = new PriceAverage(symbol,null);
+            		priceAverages.add(avgPrice);
+            	}
+			}
+    		resp.setSuccess(true);
+    		resp.setData(priceAverages);
+    	} else {
+    		resp.setSuccess(false);
+    		resp.setErrorCode("stock.invalid");
+    		resp.setMessage("No symbols or invalid Start Date");
+    	}
+    		
+        return resp;
+    }
+    
+    private Double getAvgPrice(Map<String,Double> datePriceMap,String startDate, String endDate) {
+    	List<String> dates = DateUtil.getDaysBetweenDates(startDate,endDate);
+		Double total200ClosePrices = 0D;
+		int totalDate = 0;
+		for (String date : dates) {
+			Double closePrice = datePriceMap.get(date);
+			if (closePrice != null) {
+				total200ClosePrices = total200ClosePrices + closePrice;
+				totalDate = totalDate + 1;
+			}
+		}
+		Double avg200Price = total200ClosePrices/totalDate;
+		return avg200Price;
     }
     
     

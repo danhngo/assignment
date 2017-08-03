@@ -10,7 +10,7 @@ public class ThreadSafeCacheSingleton {
     
     public static synchronized StockMemoryCache<String, Map<String,Double>> getInstance(){
         if(instance == null){
-            instance = new StockMemoryCache<String, Map<String,Double>>(3600, 500, 10000);
+            instance = new StockMemoryCache<String, Map<String,Double>>(86400, 3600, 20000);
         }
         return instance;
     }
