@@ -10,8 +10,8 @@ public class Price {
 	@XmlElement(name = "ticker")
 	private String ticker;
 	
-	@XmlElement(name = "dateClose")
-	private List<DatePrice> dateClose;
+	@XmlElement(name = "dateCloses")
+	private List<DatePrice> dateCloses;
 
 	public String getTicker() {
 		return ticker;
@@ -21,12 +21,12 @@ public class Price {
 		this.ticker = ticker;
 	}
 
-	public List<DatePrice> getDateClose() {
-		return dateClose;
+	public List<DatePrice> getDateCloses() {
+		return dateCloses;
 	}
 
-	public void setDateClose(List<DatePrice> dateClose) {
-		this.dateClose = dateClose;
+	public void setDateCloses(List<DatePrice> dateCloses) {
+		this.dateCloses = dateCloses;
 	}	
 	
 	

@@ -5,21 +5,21 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement(name = "price")
 public class DatePrice {
-	@XmlElement(name = "date")
-	private String date;
-	@XmlElement(name = "date")
-	private String price;
+	@XmlElement(name = "dateClose")
+	private String dateClose;
+	@XmlElement(name = "dateClose")
+	private Double price;
 	
-	public String getDate() {
-		return date;
+	public String getDateClose() {
+		return dateClose;
 	}
-	public void setDate(String date) {
-		this.date = date;
+	public void setDateClose(String dateClose) {
+		this.dateClose = dateClose;
 	}
-	public String getPrice() {
+	public Double getPrice() {
 		return price;
 	}
-	public void setPrice(String price) {
+	public void setPrice(Double price) {
 		this.price = price;
 	}	
 }

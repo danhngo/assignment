@@ -1,14 +1,16 @@
 package test.cache;
 
+import java.util.Map;
+
 public class ThreadSafeCacheSingleton {
 	
-	private static StockMemoryCache<String, StockMemoryCache<String,String>>  instance;
+	private static StockMemoryCache<String, Map<String,Double>>  instance;
     
     private ThreadSafeCacheSingleton(){}
     
-    public static synchronized StockMemoryCache<String, StockMemoryCache<String,String>> getInstance(){
+    public static synchronized StockMemoryCache<String, Map<String,Double>> getInstance(){
         if(instance == null){
-            instance = new StockMemoryCache<String, StockMemoryCache<String,String>>(3600, 500, 10000);
+            instance = new StockMemoryCache<String, Map<String,Double>>(3600, 500, 10000);
         }
         return instance;
     }
