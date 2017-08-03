@@ -19,8 +19,8 @@ public class StockPriceServiceServer {
  
     public static void main(String[] args) throws IOException {
         System.out.println("Starting Embedded Jersey HTTPServer...\n");
-        HttpServer crunchifyHTTPServer = createHttpServer();
-        crunchifyHTTPServer.start();
+        HttpServer server = createHttpServer();
+        server.start();
    
         FileUtil.popularJSONFileToCache();
         System.out.println("Read JSON file into cache");

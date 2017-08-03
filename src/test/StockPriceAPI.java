@@ -34,6 +34,7 @@ public class StockPriceAPI {
     public Response closePrice(@PathParam("symbol") String symbol, 
     		@QueryParam("startDate") String startDate, @QueryParam("endDate") String endDate) {
     	Response resp = new Response();
+    	symbol = symbol.toUpperCase();
     	StockMemoryCache<String, Map<String,Double>> cache = ThreadSafeCacheSingleton.getInstance();
     	Map<String,Double> datePriceMap = cache.get(symbol);
     	if (datePriceMap != null) {
@@ -47,9 +48,7 @@ public class StockPriceAPI {
     			List<String> dates = DateUtil.getDaysBetweenDates(startDate,endDate);
     			for (String date : dates) {
     				Double closePrice = datePriceMap.get(date);
-    				DatePrice datePrice = new DatePrice();
-    				datePrice.setDateClose(date);
-    				datePrice.setPrice(closePrice);
+    				DatePrice datePrice = new DatePrice(date,closePrice);
     				dateCloses.add(datePrice);
 				}    		
     			price.setDateCloses(dateCloses);
@@ -60,17 +59,20 @@ public class StockPriceAPI {
     			putError(resp,result);
     		}
     	} else {
+    		//get from DB and put item to cache    		
     		resp.setSuccess(false);
     		resp.setErrorCode("stock.symbol.notfound");
     		resp.setMessage("Symbol is not found");
     	}
-         return resp;
+    	System.out.println("Finished symbol closePrice API");
+        return resp;
     }
     
     @GET
     @Path("/{symbol}/200dma")
     public Response stock200dma(@PathParam("symbol") String symbol, @QueryParam("startDate") String startDate) {
     	Response resp = new Response();
+    	symbol = symbol.toUpperCase();
     	StockMemoryCache<String, Map<String,Double>> cache = ThreadSafeCacheSingleton.getInstance();
     	Map<String,Double> datePriceMap = cache.get(symbol);
     	if (datePriceMap != null) {
@@ -90,6 +92,7 @@ public class StockPriceAPI {
     		resp.setErrorCode("stock.symbol.notfound");
     		resp.setMessage("Symbol is not found");
     	}    	
+    	System.out.println("Finished symbol average API");
         return resp;
     }
     
@@ -121,7 +124,7 @@ public class StockPriceAPI {
     		resp.setErrorCode("stock.invalid");
     		resp.setMessage("No symbols or invalid Start Date");
     	}
-    		
+    	System.out.println("Finished multi-symbol average API");	
         return resp;
     }
     

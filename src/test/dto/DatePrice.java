@@ -10,6 +10,11 @@ public class DatePrice {
 	@XmlElement(name = "dateClose")
 	private Double price;
 	
+	public DatePrice(String dateClose, Double price) {
+		this.dateClose = dateClose;
+		this.price = price;
+	}
+	
 	public String getDateClose() {
 		return dateClose;
 	}
