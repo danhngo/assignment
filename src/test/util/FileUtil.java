@@ -17,7 +17,7 @@ public class FileUtil {
 	public static void popularJSONFileToCache() {
 		JSONParser parser = new JSONParser();
 	    try {
-	        Object obj = parser.parse(new FileReader("./resources/GE.json"));
+	        Object obj = parser.parse(new FileReader("./GE.json"));
             JSONObject jsonObject = (JSONObject) obj;
  
             JSONObject dataSet = (JSONObject) jsonObject.get("dataset");
@@ -55,4 +55,5 @@ public class FileUtil {
             e.printStackTrace();
         }
 	}
+
 }
